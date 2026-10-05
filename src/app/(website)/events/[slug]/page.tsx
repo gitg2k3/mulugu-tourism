@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { Calendar, MapPin, ArrowLeft, Clock, Share2 } from "lucide-react";
+import { Calendar, MapPin, ArrowLeft } from "lucide-react";
 import { getEventBySlug } from "@/lib/queries/events";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";

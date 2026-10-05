@@ -1,15 +1,20 @@
 import React from "react";
 import { Metadata } from "next";
 import Image from "next/image";
-import { Utensils, Sparkles } from "lucide-react";
+import { Utensils, Store } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { getBusinessesByCategory } from "@/lib/queries/businesses";
+import { BusinessGrid } from "@/components/businesses/BusinessGrid";
 
 export const metadata: Metadata = {
   title: "Food & Authentic Telangana Cuisine | Discover Mulugu",
-  description: "Taste traditional Telangana flavors: Sarva Pindi, Pachi Pulusu, country chicken curries, and organic millet foods in Mulugu.",
+  description:
+    "Taste traditional Telangana flavors: Sarva Pindi, Pachi Pulusu, country chicken curries, and organic millet foods in Mulugu.",
 };
 
-export default function FoodPage() {
+export default async function FoodPage() {
+  const diningBusinesses = await getBusinessesByCategory("dining");
+
   const dishes = [
     {
       name: "Sarva Pindi (Ginnappa)",
@@ -38,7 +43,7 @@ export default function FoodPage() {
   ];
 
   return (
-    <div className="py-12 sm:py-16">
+    <div className="py-12 sm:py-16 space-y-16">
       <Container size="xl">
         <div className="max-w-3xl mb-12">
           <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-2">
@@ -53,7 +58,7 @@ export default function FoodPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {dishes.map((dish) => (
             <div
               key={dish.name}
@@ -77,6 +82,27 @@ export default function FoodPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Dynamic CMS-Powered Dining Section */}
+        <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="max-w-3xl mb-8">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-2">
+              <Store className="w-4 h-4" />
+              <span>Verified Local Eateries</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white">
+              Where to Eat in Mulugu
+            </h2>
+            <p className="mt-2 text-zinc-600 dark:text-zinc-400 text-sm">
+              Authentic traditional canteens, dhabas, and resort dining options serving fresh local cuisine.
+            </p>
+          </div>
+
+          <BusinessGrid
+            businesses={diningBusinesses}
+            emptyMessage="No dining spots currently registered. Check back soon!"
+          />
         </div>
       </Container>
     </div>

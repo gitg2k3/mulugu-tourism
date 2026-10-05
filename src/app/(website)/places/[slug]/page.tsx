@@ -14,7 +14,7 @@ import {
   Info,
   Car,
 } from "lucide-react";
-import { getPlaceBySlug, getAllPlaces } from "@/lib/queries/places";
+import { getPlaceBySlug } from "@/lib/queries/places";
 import { getAllBusinesses } from "@/lib/queries/businesses";
 import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
@@ -90,16 +90,22 @@ export default async function PlaceDetailPage({ params }: PageProps) {
 
         {/* Featured Image Banner */}
         <div className="relative aspect-[21/9] w-full rounded-3xl overflow-hidden shadow-2xl mb-12 bg-zinc-100 dark:bg-zinc-800">
-          <Image
-            src={place.featuredImage}
-            alt={place.title}
-            fill
-            priority
-            className="object-cover"
-          />
+          {place.featuredImage ? (
+            <Image
+              src={place.featuredImage}
+              alt={place.title}
+              fill
+              priority
+              className="object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-tr from-emerald-950 via-zinc-900 to-zinc-950 flex items-center justify-center">
+              <span className="text-zinc-600 dark:text-zinc-400 font-semibold">{place.title}</span>
+            </div>
+          )}
           <div className="absolute bottom-4 right-4">
             <a
-              href={`https://www.google.com/maps/dir/?api=1&destination=${place.coordinates.lat},${place.coordinates.lng}`}
+              href={`https://www.google.com/maps/dir/?api=1&destination=${place.coordinates?.lat ?? 18.2588},${place.coordinates?.lng ?? 79.9431}`}
               target="_blank"
               rel="noopener noreferrer"
             >

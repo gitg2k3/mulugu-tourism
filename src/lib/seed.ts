@@ -7,6 +7,8 @@ import { CATEGORIES } from "@/data/categories";
 import { PLACES } from "@/data/places";
 import { BUSINESSES } from "@/data/businesses";
 import { EVENTS } from "@/data/events";
+import { ARTICLES } from "@/data/articles";
+import { ITINERARIES } from "@/data/itineraries";
 
 /**
  * Idempotent seed function for Discover Mulugu tourism data.
@@ -173,7 +175,69 @@ export async function seedDatabase() {
     }
   }
 
-  // 5. Seed initial admin user if none exists
+  // 5. Seed Articles
+  console.log("Seeding articles...");
+  for (const art of ARTICLES) {
+    const existing = await payload.find({
+      collection: "articles",
+      where: { slug: { equals: art.slug } },
+      limit: 1,
+    });
+
+    if (existing.totalDocs === 0) {
+      await payload.create({
+        collection: "articles",
+        data: {
+          title: art.title,
+          slug: art.slug,
+          excerpt: art.excerpt,
+          category: art.category,
+          readTime: art.readTime,
+          content: art.content,
+          coverImage: art.coverImage,
+        },
+      });
+      console.log(`  + Created article: ${art.title}`);
+    } else {
+      console.log(`  ~ Article already exists: ${art.title}`);
+    }
+  }
+
+  // 6. Seed Itineraries
+  console.log("Seeding itineraries...");
+  for (const itin of ITINERARIES) {
+    const existing = await payload.find({
+      collection: "itineraries",
+      where: { slug: { equals: itin.slug } },
+      limit: 1,
+    });
+
+    if (existing.totalDocs === 0) {
+      await payload.create({
+        collection: "itineraries",
+        data: {
+          title: itin.title,
+          slug: itin.slug,
+          duration: itin.duration,
+          summary: itin.summary,
+          coverImage: itin.coverImage,
+          highlights: itin.highlights?.map((item) => ({ item })),
+          days: itin.days?.map((d) => ({
+            day: d.day,
+            title: d.title,
+            description: d.description,
+            activities: d.activities?.map((item) => ({ item })),
+            recommendedPlaces: d.recommendedPlaces?.map((slug) => ({ slug })),
+          })),
+        },
+      });
+      console.log(`  + Created itinerary: ${itin.title}`);
+    } else {
+      console.log(`  ~ Itinerary already exists: ${itin.title}`);
+    }
+  }
+
+  // 7. Seed initial admin user if none exists
   console.log("Checking admin users...");
   const adminUsers = await payload.find({
     collection: "users",
@@ -186,7 +250,7 @@ export async function seedDatabase() {
       data: {
         email: "admin@discovermulugu.org",
         password: "MuluguAdmin2026!",
-        name: "District Tourism Admin",
+        name: "Site Administrator",
         role: "admin",
       },
     });

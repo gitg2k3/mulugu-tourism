@@ -1,4 +1,3 @@
-import { BUSINESSES } from "@/data/businesses";
 import { Business, BusinessCategory } from "@/types/business";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -34,7 +33,7 @@ function mapDocToBusiness(doc: BusinessDoc): Business {
     id: String(doc.id),
     slug: doc.slug,
     name: doc.name,
-    category: doc.category as BusinessCategory,
+    category: (doc.category as BusinessCategory) || "stay",
     categoryLabel: doc.categoryLabel || doc.category,
     tagline: doc.tagline || "",
     description: doc.description || "",
@@ -60,75 +59,75 @@ function mapDocToBusiness(doc: BusinessDoc): Business {
 export async function getAllBusinesses(): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "businesses",
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "businesses",
+      limit: 100,
+    });
+    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+  } catch (error) {
+    console.error("Failed to query businesses from Payload CMS:", error);
+    return [];
   }
-  return BUSINESSES;
 }
 
 export async function getFeaturedBusinesses(): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "businesses",
-        where: { isFeatured: { equals: true } },
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "businesses",
+      where: { isFeatured: { equals: true } },
+      limit: 100,
+    });
+    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+  } catch (error) {
+    console.error("Failed to query featured businesses from Payload CMS:", error);
+    return [];
   }
-  return BUSINESSES.filter((b) => b.isFeatured);
 }
 
 export async function getBusinessBySlug(slug: string): Promise<Business | null> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "businesses",
-        where: { slug: { equals: slug } },
-        limit: 1,
-      });
-      if (res.docs.length > 0) {
-        return mapDocToBusiness(res.docs[0] as unknown as BusinessDoc);
-      }
+    if (!payload) return null;
+
+    const res = await payload.find({
+      collection: "businesses",
+      where: { slug: { equals: slug } },
+      limit: 1,
+    });
+    if (res.docs.length > 0) {
+      return mapDocToBusiness(res.docs[0] as unknown as BusinessDoc);
     }
-  } catch {
-    // Graceful fallback to mock data
+    return null;
+  } catch (error) {
+    console.error(`Failed to query business "${slug}" from Payload CMS:`, error);
+    return null;
   }
-  const found = BUSINESSES.find((b) => b.slug === slug);
-  return found || null;
 }
 
 export async function getBusinessesByCategory(category: string): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "businesses",
-        where: { category: { equals: category } },
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "businesses",
+      where: { category: { equals: category } },
+      limit: 100,
+    });
+    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+  } catch (error) {
+    console.error(`Failed to query businesses by category "${category}" from Payload CMS:`, error);
+    return [];
   }
-  return BUSINESSES.filter((b) => b.category === category);
+}
+
+export async function getNearbyBusinessesForPlace(businessSlugs: string[]): Promise<Business[]> {
+  if (!businessSlugs || businessSlugs.length === 0) return [];
+  const all = await getAllBusinesses();
+  return all.filter((b) => businessSlugs.includes(b.slug));
 }

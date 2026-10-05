@@ -1,10 +1,21 @@
 import React from "react";
 import Link from "next/link";
-import { MapPin, Phone, Mail, Compass, ExternalLink, ShieldCheck } from "lucide-react";
-import { SITE_CONFIG, NAV_LINKS, DISTRICT_STATS } from "@/lib/constants";
+import { MapPin, Phone, Mail, ShieldCheck } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/constants";
 import { Container } from "@/components/ui/Container";
+import { getSiteSettingsGlobal, getFooterGlobal } from "@/lib/queries/homepage";
 
-export function Footer() {
+export async function Footer() {
+  const [siteSettings, footerData] = await Promise.all([
+    getSiteSettingsGlobal(),
+    getFooterGlobal(),
+  ]);
+
+  const helpline = siteSettings.contactPhone || SITE_CONFIG.contact.helpline;
+  const email = siteSettings.contactEmail || SITE_CONFIG.contact.email;
+  const aboutText = footerData.aboutText || SITE_CONFIG.description;
+  const copyright = footerData.copyright || `© ${new Date().getFullYear()} Discover Mulugu. All rights reserved.`;
+
   return (
     <footer className="bg-zinc-950 text-zinc-300 border-t border-zinc-800 pt-16 pb-12 mt-auto">
       <Container size="xl">
@@ -13,16 +24,16 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <span className="font-extrabold text-2xl text-white tracking-tight">
-                Discover Mulugu
+                {siteSettings.siteName || SITE_CONFIG.name}
               </span>
             </div>
             <p className="text-sm text-zinc-400 leading-relaxed">
-              {SITE_CONFIG.description}
+              {aboutText}
             </p>
             <div className="pt-2">
               <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Government of Telangana Tourism Portal
+                Community Tourism & Heritage Guide
               </span>
             </div>
           </div>
@@ -107,14 +118,14 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`tel:${SITE_CONFIG.contact.helpline}`} className="hover:text-white transition-colors">
-                  Helpline: {SITE_CONFIG.contact.helpline}
+                <a href={`tel:${helpline}`} className="hover:text-white transition-colors">
+                  Helpline: {helpline}
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`mailto:${SITE_CONFIG.contact.email}`} className="hover:text-white transition-colors">
-                  {SITE_CONFIG.contact.email}
+                <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+                  {email}
                 </a>
               </div>
             </div>
@@ -123,15 +134,20 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <p>© {new Date().getFullYear()} District Administration Mulugu, Government of Telangana.</p>
-          <div className="flex items-center gap-6">
+          <div className="space-y-1 text-center sm:text-left">
+            <p>{copyright}</p>
+            <p className="text-[11px] text-zinc-600">
+              Discover Mulugu is an independent travel &amp; eco-tourism guide and is not affiliated with or endorsed by any government entity.
+            </p>
+          </div>
+          <div className="flex items-center gap-6 shrink-0">
             <Link href="/about" className="hover:text-zinc-300 transition-colors">
               Privacy Policy
             </Link>
             <Link href="/about" className="hover:text-zinc-300 transition-colors">
               Terms of Use
             </Link>
-            <Link href="/(payload)/admin" className="text-zinc-600 hover:text-zinc-400 transition-colors">
+            <Link href="/admin" className="text-zinc-600 hover:text-zinc-400 transition-colors">
               Admin Portal
             </Link>
           </div>

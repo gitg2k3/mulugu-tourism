@@ -3,6 +3,7 @@ import { getAllPlaces } from "@/lib/queries/places";
 import { getAllBusinesses } from "@/lib/queries/businesses";
 import { getAllEvents } from "@/lib/queries/events";
 import { getAllArticles } from "@/lib/queries/articles";
+import { getAllItineraries } from "@/lib/queries/itineraries";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -27,11 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  const [places, businesses, events, articles] = await Promise.all([
+  const [places, businesses, events, articles, itineraries] = await Promise.all([
     getAllPlaces(),
     getAllBusinesses(),
     getAllEvents(),
     getAllArticles(),
+    getAllItineraries(),
   ]);
 
   const placeRoutes = places.map((place) => ({
@@ -62,5 +64,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...placeRoutes, ...businessRoutes, ...eventRoutes, ...articleRoutes];
+  const itineraryRoutes = itineraries.map((i) => ({
+    url: `${baseUrl}/itineraries/${i.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [
+    ...staticRoutes,
+    ...placeRoutes,
+    ...businessRoutes,
+    ...eventRoutes,
+    ...articleRoutes,
+    ...itineraryRoutes,
+  ];
 }

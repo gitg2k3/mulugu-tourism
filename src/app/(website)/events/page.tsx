@@ -2,14 +2,14 @@ import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { getAllEvents } from "@/lib/queries/events";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Events & Medaram Jatara | Discover Mulugu",
-  description: "Official schedule of festivals, Medaram Jatara, Kakatiya cultural dance festivals, and eco-carnivals in Mulugu.",
+  description: "Schedule and guide to festivals, Medaram Jatara, Kakatiya cultural celebrations, and eco-carnivals in Mulugu.",
 };
 
 export default async function EventsPage() {

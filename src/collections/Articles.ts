@@ -26,6 +26,10 @@ export const ArticlesCollection: CollectionConfig = {
       type: "text",
     },
     {
+      name: "readTime",
+      type: "text",
+    },
+    {
       name: "content",
       type: "textarea",
     },

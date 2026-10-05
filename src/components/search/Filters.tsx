@@ -1,14 +1,33 @@
 "use client";
 
 import React from "react";
-import { CATEGORIES } from "@/data/categories";
+
+export interface FilterCategoryItem {
+  id: string;
+  title: string;
+  slug: string;
+}
 
 interface FiltersProps {
   selectedCategory: string;
   onSelectCategory: (categorySlug: string) => void;
+  categories?: FilterCategoryItem[];
 }
 
-export function Filters({ selectedCategory, onSelectCategory }: FiltersProps) {
+const DEFAULT_CATEGORIES: FilterCategoryItem[] = [
+  { id: "cat-heritage", title: "UNESCO & Heritage", slug: "heritage" },
+  { id: "cat-lakes", title: "Lakes & Waterways", slug: "lakes-eco-tourism" },
+  { id: "cat-waterfalls", title: "Cascading Waterfalls", slug: "waterfalls" },
+  { id: "cat-wildlife", title: "Wildlife & Forests", slug: "wildlife-forests" },
+  { id: "cat-spiritual", title: "Spiritual & Tribal Lore", slug: "spiritual-temples" },
+  { id: "cat-adventure", title: "Adventure & Camping", slug: "adventure" },
+];
+
+export function Filters({
+  selectedCategory,
+  onSelectCategory,
+  categories = DEFAULT_CATEGORIES,
+}: FiltersProps) {
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
       <button
@@ -22,7 +41,7 @@ export function Filters({ selectedCategory, onSelectCategory }: FiltersProps) {
         All Destinations
       </button>
 
-      {CATEGORIES.map((cat) => (
+      {categories.map((cat) => (
         <button
           key={cat.id}
           onClick={() => onSelectCategory(cat.slug)}

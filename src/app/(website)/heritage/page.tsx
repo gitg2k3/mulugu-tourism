@@ -2,7 +2,7 @@ import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Landmark, ArrowRight, ShieldCheck } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { getPlaceBySlug } from "@/lib/queries/places";
@@ -32,15 +32,19 @@ export default async function HeritagePage() {
         </div>
 
         {/* Ramappa Spotlight Hero Card */}
-        {ramappa && (
+        {ramappa ? (
           <div className="rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl mb-16 grid grid-cols-1 lg:grid-cols-12">
             <div className="relative aspect-[16/10] lg:aspect-auto lg:col-span-6 bg-zinc-800">
-              <Image
-                src={ramappa.featuredImage}
-                alt="Ramappa Temple"
-                fill
-                className="object-cover"
-              />
+              {ramappa.featuredImage ? (
+                <Image
+                  src={ramappa.featuredImage}
+                  alt="Ramappa Temple"
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-tr from-amber-950 via-zinc-900 to-zinc-950" />
+              )}
               <div className="absolute top-4 left-4 bg-amber-500 text-zinc-950 font-bold text-xs px-3 py-1 rounded-full">
                 UNESCO Inscribed 2021
               </div>
@@ -79,6 +83,12 @@ export default async function HeritagePage() {
                 </Link>
               </div>
             </div>
+          </div>
+        ) : (
+          <div className="py-16 text-center rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 p-8">
+            <p className="text-zinc-600 dark:text-zinc-400 font-medium">
+              Heritage spotlight is currently being updated in CMS.
+            </p>
           </div>
         )}
       </Container>

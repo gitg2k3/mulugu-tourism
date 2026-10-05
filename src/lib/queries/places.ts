@@ -1,4 +1,3 @@
-import { PLACES } from "@/data/places";
 import { Place, PlaceCategory } from "@/types/place";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -10,6 +9,12 @@ interface PlaceTipDoc {
 }
 interface PlaceSlugDoc {
   slug?: string;
+}
+interface PlaceGalleryDoc {
+  id?: string;
+  url: string;
+  alt?: string;
+  caption?: string;
 }
 interface PlaceDoc {
   id: string | number;
@@ -23,7 +28,7 @@ interface PlaceDoc {
   location: string;
   coordinates?: { lat: number; lng: number };
   featuredImage?: string;
-  gallery?: { id?: string; url: string; alt?: string; caption?: string }[];
+  gallery?: PlaceGalleryDoc[];
   timings?: string;
   entryFee?: string;
   bestTimeToVisit?: string;
@@ -44,10 +49,10 @@ function mapDocToPlace(doc: PlaceDoc): Place {
     title: doc.title,
     teluguTitle: doc.teluguTitle,
     tagline: doc.tagline || "",
-    description: doc.description,
-    category: doc.category as PlaceCategory,
+    description: doc.description || "",
+    category: (doc.category as PlaceCategory) || "heritage",
     categoryLabel: doc.categoryLabel || doc.category,
-    location: doc.location,
+    location: doc.location || "",
     coordinates: doc.coordinates || { lat: 0, lng: 0 },
     featuredImage: doc.featuredImage || "",
     gallery:
@@ -86,81 +91,80 @@ function mapDocToPlace(doc: PlaceDoc): Place {
 export async function getAllPlaces(): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "places",
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data if DB is unavailable
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "places",
+      limit: 100,
+    });
+    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+  } catch (error) {
+    console.error("Failed to query places from Payload CMS:", error);
+    return [];
   }
-  return PLACES;
 }
 
 export async function getFeaturedPlaces(): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "places",
-        where: { isFeatured: { equals: true } },
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "places",
+      where: { isFeatured: { equals: true } },
+      limit: 100,
+    });
+    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+  } catch (error) {
+    console.error("Failed to query featured places from Payload CMS:", error);
+    return [];
   }
-  return PLACES.filter((place) => place.isFeatured);
 }
 
 export async function getPlaceBySlug(slug: string): Promise<Place | null> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "places",
-        where: { slug: { equals: slug } },
-        limit: 1,
-      });
-      if (res.docs.length > 0) {
-        return mapDocToPlace(res.docs[0] as unknown as PlaceDoc);
-      }
+    if (!payload) return null;
+
+    const res = await payload.find({
+      collection: "places",
+      where: { slug: { equals: slug } },
+      limit: 1,
+    });
+    if (res.docs.length > 0) {
+      return mapDocToPlace(res.docs[0] as unknown as PlaceDoc);
     }
-  } catch {
-    // Graceful fallback to mock data
+    return null;
+  } catch (error) {
+    console.error(`Failed to query place "${slug}" from Payload CMS:`, error);
+    return null;
   }
-  const found = PLACES.find((place) => place.slug === slug);
-  return found || null;
 }
 
 export async function getPlacesByCategory(category: string): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "places",
-        where: { category: { equals: category } },
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "places",
+      where: { category: { equals: category } },
+      limit: 100,
+    });
+    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+  } catch (error) {
+    console.error(`Failed to query places by category "${category}" from Payload CMS:`, error);
+    return [];
   }
-  return PLACES.filter((place) => place.category === category);
 }
 
 export async function getNearbyPlaces(place: Place): Promise<Place[]> {
   if (!place.nearbyPlaces || place.nearbyPlaces.length === 0) return [];
   const all = await getAllPlaces();
   return all.filter((p) => place.nearbyPlaces?.includes(p.slug));
+}
+
+export async function getPlacesForBusiness(businessSlug: string): Promise<Place[]> {
+  const all = await getAllPlaces();
+  return all.filter((p) => p.nearbyBusinesses?.includes(businessSlug));
 }

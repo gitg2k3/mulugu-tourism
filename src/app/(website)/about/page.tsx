@@ -3,13 +3,17 @@ import { Metadata } from "next";
 import { ShieldCheck, Trees, Landmark, HeartHandshake, PhoneCall } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SITE_CONFIG, DISTRICT_STATS } from "@/lib/constants";
+import { getSiteSettingsGlobal } from "@/lib/queries/homepage";
 
 export const metadata: Metadata = {
-  title: "About Mulugu District | Official Tourism Portal",
-  description: "Learn about the history, geography, indigenous communities, and administrative initiatives of Mulugu District, Telangana.",
+  title: "About Mulugu District | Travel & Tourism Guide",
+  description: "Learn about the history, geography, eco-sanctuaries, and travel attractions of Mulugu District, Telangana.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const siteSettings = await getSiteSettingsGlobal();
+  const helpline = siteSettings.contactPhone || SITE_CONFIG.contact.helpline;
+  const email = siteSettings.contactEmail || SITE_CONFIG.contact.email;
   return (
     <div className="py-12 sm:py-16">
       <Container size="xl">
@@ -84,19 +88,25 @@ export default function AboutPage() {
             </p>
           </section>
 
-          {/* Contact & District Administration Desk */}
+          {/* Contact & Visitor Support Desk */}
           <div className="p-8 rounded-3xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 space-y-4">
             <h3 className="font-bold text-lg text-zinc-900 dark:text-white flex items-center gap-2">
               <PhoneCall className="w-5 h-5 text-emerald-600" />
-              District Tourism Office
+              Visitor Information &amp; Support
             </h3>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
               {SITE_CONFIG.contact.address}
             </p>
             <div className="pt-2 text-xs sm:text-sm">
-              <p>Helpline: <strong className="text-zinc-900 dark:text-white">{SITE_CONFIG.contact.helpline}</strong></p>
-              <p>Email: <strong className="text-zinc-900 dark:text-white">{SITE_CONFIG.contact.email}</strong></p>
+              <p>Helpline: <strong className="text-zinc-900 dark:text-white">{helpline}</strong></p>
+              <p>Email: <strong className="text-zinc-900 dark:text-white">{email}</strong></p>
             </div>
+          </div>
+
+          {/* Legal Disclaimer */}
+          <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <strong className="text-zinc-900 dark:text-zinc-200 block mb-1">Disclaimer</strong>
+            Discover Mulugu is an independent community tourism and cultural guide created to promote eco-tourism, local artisans, and travel discovery. This website is not owned, operated, or affiliated with any government department or official administration.
           </div>
         </div>
       </Container>

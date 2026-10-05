@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Waves, Trees, Compass, Sparkles, Flame, Camera } from "lucide-react";
+import { Waves, Trees, Compass, Sparkles, Flame } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 
 export function ThingsToDo() {

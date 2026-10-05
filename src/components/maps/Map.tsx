@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Navigation, ExternalLink, MapPin, Compass } from "lucide-react";
+import { Navigation, ExternalLink, Compass } from "lucide-react";
 import { Place } from "@/types/place";
 import { MapMarker } from "./MapMarker";
 import { Button } from "@/components/ui/Button";

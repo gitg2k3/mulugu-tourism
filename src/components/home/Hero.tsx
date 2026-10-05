@@ -2,19 +2,32 @@
 
 import React from "react";
 import Link from "next/link";
-import { Sparkles, MapPin, Compass, ArrowRight, ShieldCheck } from "lucide-react";
+import { Sparkles, Compass, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { SearchBar } from "@/components/search/SearchBar";
 import { DISTRICT_STATS } from "@/lib/constants";
+import type { HomepageGlobalData } from "@/lib/queries/homepage";
 
-export function Hero() {
+interface HeroProps {
+  data?: HomepageGlobalData;
+}
+
+export function Hero({ data }: HeroProps) {
+  const heading = data?.heroHeading || "Discover the Soul of Mulugu";
+  const subtitle =
+    data?.heroSubtitle ||
+    "Step into 800 years of Kakatiya architectural genius at Ramappa Temple, walk across the 13 emerald islands of Laknavaram Lake, and witness Asia's largest tribal celebration at Medaram.";
+  const backgroundUrl =
+    data?.heroBackgroundUrl ||
+    "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1920&q=80";
+
   return (
     <section className="relative overflow-hidden bg-zinc-950 text-white pt-24 pb-20 sm:pt-32 sm:pb-28">
       {/* Background with gradient overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-30 transform scale-105 transition-transform duration-1000"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1920&q=80')`,
+          backgroundImage: `url('${backgroundUrl}')`,
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-zinc-950/40" />
@@ -31,15 +44,21 @@ export function Hero() {
 
         {/* Main headline */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-tight">
-          Discover the Soul of{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300">
-            Mulugu
-          </span>
+          {heading.includes("Mulugu") ? (
+            <>
+              {heading.substring(0, heading.indexOf("Mulugu"))}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-300">
+                Mulugu
+              </span>
+              {heading.substring(heading.indexOf("Mulugu") + "Mulugu".length)}
+            </>
+          ) : (
+            heading
+          )}
         </h1>
 
         <p className="mt-6 text-base sm:text-lg lg:text-xl text-zinc-300 max-w-3xl mx-auto leading-relaxed font-light">
-          Step into 800 years of Kakatiya architectural genius at Ramappa Temple, walk across
-          the 13 emerald islands of Laknavaram Lake, and witness Asia&apos;s largest tribal celebration at Medaram.
+          {subtitle}
         </p>
 
         {/* Search bar inside Hero */}

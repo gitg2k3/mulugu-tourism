@@ -4,11 +4,11 @@ export const SITE_CONFIG = {
   tagline: "The UNESCO Heritage & Eco-Tourism Capital of Telangana",
   description:
     "Explore the breathtaking UNESCO World Heritage Ramappa Temple, scenic Laknavaram Lake, cascading Bogatha Waterfalls, and the largest tribal congregation Medaram Jatara.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://discovermulugu.telangana.gov.in",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://discovermulugu.org",
   contact: {
     helpline: "+91 8715 220000",
-    email: "tourism-mulugu@telangana.gov.in",
-    address: "District Collectorate, Mulugu, Telangana - 506343",
+    email: "contact@discovermulugu.org",
+    address: "Mulugu, Telangana - 506343",
   },
   social: {
     twitter: "https://twitter.com/TourismMulugu",

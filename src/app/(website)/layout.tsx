@@ -24,17 +24,17 @@ export const metadata: Metadata = {
     template: "%s | Discover Mulugu",
   },
   description:
-    "Official tourism portal for Mulugu District, Telangana. Explore UNESCO World Heritage Ramappa Temple, Laknavaram Lake, Bogatha Waterfalls, and Medaram Jatara.",
+    "Discover the natural beauty and cultural heritage of Mulugu, Telangana. Explore UNESCO World Heritage Ramappa Temple, Laknavaram Lake, Bogatha Waterfalls, and Medaram Jatara.",
   keywords: [
     "Mulugu Tourism",
     "Ramappa Temple UNESCO",
     "Laknavaram Lake",
     "Bogatha Waterfalls",
     "Medaram Jatara",
-    "Telangana Tourism",
+    "Telangana Eco Tourism",
     "Tadvai Forest Cottages",
   ],
-  authors: [{ name: "District Administration Mulugu" }],
+  authors: [{ name: "Discover Mulugu" }],
   icons: {
     icon: "/icons/Discover Mulugu_ Tribal Heritage Gateway.png",
   },

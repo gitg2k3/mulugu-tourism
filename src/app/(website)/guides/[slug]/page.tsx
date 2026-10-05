@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, Calendar, Share2 } from "lucide-react";
+import { ArrowLeft, Clock, Calendar } from "lucide-react";
 import { getArticleBySlug } from "@/lib/queries/articles";
 import { Container } from "@/components/ui/Container";
 import { formatDate } from "@/lib/utils";
@@ -58,24 +58,34 @@ export default async function GuideDetailPage({ params }: PageProps) {
             {article.title}
           </h1>
 
-          <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 italic border-l-4 border-emerald-600 pl-4">
-            {article.excerpt}
-          </p>
+          {article.excerpt && (
+            <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 italic border-l-4 border-emerald-600 pl-4">
+              {article.excerpt}
+            </p>
+          )}
 
-          <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden my-8 bg-zinc-800">
-            <Image src={article.coverImage} alt={article.title} fill className="object-cover" />
-          </div>
+          {article.coverImage && (
+            <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden my-8 bg-zinc-800">
+              <Image src={article.coverImage} alt={article.title} fill className="object-cover" />
+            </div>
+          )}
 
           <div className="prose dark:prose-invert max-w-none text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-4 text-sm sm:text-base">
-            <p>
-              Mulugu district represents one of South India&apos;s most culturally dense and ecologically intact
-              destinations. Steeped in the architectural glory of the Kakatiya Dynasty, its temples and lakes
-              were engineered with profound environmental foresight.
-            </p>
-            <p>
-              Visitors are encouraged to travel responsibly, support local tribal weavers and honey cooperatives,
-              and maintain respect for the sacred groves of Chilakalagutta and Sammakka Sarakka.
-            </p>
+            {article.content ? (
+              <p>{article.content}</p>
+            ) : (
+              <>
+                <p>
+                  Mulugu district represents one of South India&apos;s most culturally dense and ecologically intact
+                  destinations. Steeped in the architectural glory of the Kakatiya Dynasty, its temples and lakes
+                  were engineered with profound environmental foresight.
+                </p>
+                <p>
+                  Visitors are encouraged to travel responsibly, support local tribal weavers and honey cooperatives,
+                  and maintain respect for the sacred groves of Chilakalagutta and Sammakka Sarakka.
+                </p>
+              </>
+            )}
           </div>
         </article>
       </Container>

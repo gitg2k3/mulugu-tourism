@@ -23,7 +23,7 @@ export const SiteSettingsGlobal: GlobalConfig = {
     {
       name: "contactEmail",
       type: "text",
-      defaultValue: "tourism-mulugu@telangana.gov.in",
+      defaultValue: "contact@discovermulugu.org",
     },
     {
       name: "emergencyPolice",

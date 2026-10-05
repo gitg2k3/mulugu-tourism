@@ -8,12 +8,12 @@ export const FooterGlobal: GlobalConfig = {
       name: "aboutText",
       type: "textarea",
       defaultValue:
-        "Official tourism initiative by District Administration Mulugu, Government of Telangana, dedicated to promoting sustainable eco-tourism and preserving Kakatiya cultural heritage.",
+        "An independent community eco-tourism initiative dedicated to showcasing Mulugu's rich Kakatiya heritage, pristine nature, and local cultural traditions.",
     },
     {
       name: "copyright",
       type: "text",
-      defaultValue: "© 2026 District Administration Mulugu, Government of Telangana. All rights reserved.",
+      defaultValue: "© 2026 Discover Mulugu. All rights reserved.",
     },
   ],
 };

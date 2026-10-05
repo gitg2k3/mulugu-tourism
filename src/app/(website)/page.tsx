@@ -8,15 +8,17 @@ import UpcomingEvents from "@/components/home/UpcomingEvents";
 import { getFeaturedPlaces } from "@/lib/queries/places";
 import { getFeaturedBusinesses } from "@/lib/queries/businesses";
 import { getUpcomingEvents } from "@/lib/queries/events";
+import { getHomepageGlobal } from "@/lib/queries/homepage";
 
 export const metadata = {
-  title: "Discover Mulugu | UNESCO Heritage, Lakes & Eco-Tourism Capital of Telangana",
+  title: "Discover Mulugu | UNESCO Heritage, Lakes & Eco-Tourism Guide",
   description:
-    "Official tourism portal for Mulugu District. Explore UNESCO World Heritage Ramappa Temple, Laknavaram Lake suspension bridges, Bogatha waterfalls, and Medaram Jatara.",
+    "Explore the UNESCO Heritage & Eco-Tourism wonders of Mulugu. Discover Ramappa Temple, Laknavaram Lake suspension bridges, Bogatha waterfalls, and Medaram Jatara.",
 };
 
 export default async function HomePage() {
-  const [featuredPlaces, popularBusinesses, upcomingEvents] = await Promise.all([
+  const [homepageData, featuredPlaces, popularBusinesses, upcomingEvents] = await Promise.all([
+    getHomepageGlobal(),
     getFeaturedPlaces(),
     getFeaturedBusinesses(),
     getUpcomingEvents(),
@@ -24,7 +26,7 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      <Hero />
+      <Hero data={homepageData} />
       <FeaturedPlaces places={featuredPlaces} />
       <HeritageSection />
       <ThingsToDo />

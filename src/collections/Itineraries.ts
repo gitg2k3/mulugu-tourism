@@ -30,6 +30,30 @@ export const ItinerariesCollection: CollectionConfig = {
       name: "coverImage",
       type: "text",
     },
+    {
+      name: "highlights",
+      type: "array",
+      fields: [{ name: "item", type: "text" }],
+    },
+    {
+      name: "days",
+      type: "array",
+      fields: [
+        { name: "day", type: "number" },
+        { name: "title", type: "text" },
+        { name: "description", type: "textarea" },
+        {
+          name: "activities",
+          type: "array",
+          fields: [{ name: "item", type: "text" }],
+        },
+        {
+          name: "recommendedPlaces",
+          type: "array",
+          fields: [{ name: "slug", type: "text" }],
+        },
+      ],
+    },
   ],
 };
 

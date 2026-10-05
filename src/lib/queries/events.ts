@@ -1,4 +1,3 @@
-import { EVENTS } from "@/data/events";
 import { TourismEvent } from "@/types/common";
 import { getPayloadClient } from "@/lib/payload";
 
@@ -26,7 +25,7 @@ function mapDocToEvent(doc: EventDoc): TourismEvent {
     startDate: doc.startDate || "",
     endDate: doc.endDate,
     location: doc.location || "",
-    category: doc.category || "",
+    category: doc.category || "Festival",
     coverImage: doc.coverImage || "",
     isFeatured: Boolean(doc.isFeatured),
   };
@@ -35,55 +34,52 @@ function mapDocToEvent(doc: EventDoc): TourismEvent {
 export async function getAllEvents(): Promise<TourismEvent[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "events",
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "events",
+      limit: 100,
+    });
+    return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+  } catch (error) {
+    console.error("Failed to query events from Payload CMS:", error);
+    return [];
   }
-  return EVENTS;
 }
 
 export async function getUpcomingEvents(): Promise<TourismEvent[]> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "events",
-        limit: 100,
-      });
-      if (res.docs.length > 0) {
-        return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
-      }
-    }
-  } catch {
-    // Graceful fallback to mock data
+    if (!payload) return [];
+
+    const res = await payload.find({
+      collection: "events",
+      limit: 100,
+      sort: "startDate",
+    });
+    return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+  } catch (error) {
+    console.error("Failed to query upcoming events from Payload CMS:", error);
+    return [];
   }
-  return EVENTS;
 }
 
 export async function getEventBySlug(slug: string): Promise<TourismEvent | null> {
   try {
     const payload = await getPayloadClient();
-    if (payload) {
-      const res = await payload.find({
-        collection: "events",
-        where: { slug: { equals: slug } },
-        limit: 1,
-      });
-      if (res.docs.length > 0) {
-        return mapDocToEvent(res.docs[0] as unknown as EventDoc);
-      }
+    if (!payload) return null;
+
+    const res = await payload.find({
+      collection: "events",
+      where: { slug: { equals: slug } },
+      limit: 1,
+    });
+    if (res.docs.length > 0) {
+      return mapDocToEvent(res.docs[0] as unknown as EventDoc);
     }
-  } catch {
-    // Graceful fallback to mock data
+    return null;
+  } catch (error) {
+    console.error(`Failed to query event "${slug}" from Payload CMS:`, error);
+    return null;
   }
-  const found = EVENTS.find((e) => e.slug === slug);
-  return found || null;
 }
