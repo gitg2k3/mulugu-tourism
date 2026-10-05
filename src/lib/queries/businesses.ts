@@ -1,0 +1,134 @@
+import { BUSINESSES } from "@/data/businesses";
+import { Business, BusinessCategory } from "@/types/business";
+import { getPayloadClient } from "@/lib/payload";
+
+interface BusinessAmenityDoc {
+  item?: string;
+}
+
+interface BusinessDoc {
+  id: string | number;
+  slug: string;
+  name: string;
+  category: string;
+  categoryLabel?: string;
+  tagline?: string;
+  description?: string;
+  address?: string;
+  location?: string;
+  coordinates?: { lat: number; lng: number };
+  phone: string;
+  email?: string;
+  website?: string;
+  featuredImage?: string;
+  pricingRange?: "₹" | "₹₹" | "₹₹₹";
+  rating?: number;
+  reviewCount?: number;
+  isVerified?: boolean;
+  isFeatured?: boolean;
+  amenities?: (string | BusinessAmenityDoc)[];
+}
+
+function mapDocToBusiness(doc: BusinessDoc): Business {
+  return {
+    id: String(doc.id),
+    slug: doc.slug,
+    name: doc.name,
+    category: doc.category as BusinessCategory,
+    categoryLabel: doc.categoryLabel || doc.category,
+    tagline: doc.tagline || "",
+    description: doc.description || "",
+    address: doc.address || "",
+    location: doc.location || "",
+    coordinates: doc.coordinates || { lat: 0, lng: 0 },
+    phone: doc.phone || "",
+    email: doc.email,
+    website: doc.website,
+    featuredImage: doc.featuredImage || "",
+    pricingRange: doc.pricingRange,
+    rating: typeof doc.rating === "number" ? doc.rating : 4.5,
+    reviewCount: typeof doc.reviewCount === "number" ? doc.reviewCount : 0,
+    isVerified: Boolean(doc.isVerified),
+    isFeatured: Boolean(doc.isFeatured),
+    amenities:
+      doc.amenities
+        ?.map((a) => (typeof a === "string" ? a : a.item || ""))
+        .filter((item): item is string => Boolean(item)) || [],
+  };
+}
+
+export async function getAllBusinesses(): Promise<Business[]> {
+  try {
+    const payload = await getPayloadClient();
+    if (payload) {
+      const res = await payload.find({
+        collection: "businesses",
+        limit: 100,
+      });
+      if (res.docs.length > 0) {
+        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+      }
+    }
+  } catch {
+    // Graceful fallback to mock data
+  }
+  return BUSINESSES;
+}
+
+export async function getFeaturedBusinesses(): Promise<Business[]> {
+  try {
+    const payload = await getPayloadClient();
+    if (payload) {
+      const res = await payload.find({
+        collection: "businesses",
+        where: { isFeatured: { equals: true } },
+        limit: 100,
+      });
+      if (res.docs.length > 0) {
+        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+      }
+    }
+  } catch {
+    // Graceful fallback to mock data
+  }
+  return BUSINESSES.filter((b) => b.isFeatured);
+}
+
+export async function getBusinessBySlug(slug: string): Promise<Business | null> {
+  try {
+    const payload = await getPayloadClient();
+    if (payload) {
+      const res = await payload.find({
+        collection: "businesses",
+        where: { slug: { equals: slug } },
+        limit: 1,
+      });
+      if (res.docs.length > 0) {
+        return mapDocToBusiness(res.docs[0] as unknown as BusinessDoc);
+      }
+    }
+  } catch {
+    // Graceful fallback to mock data
+  }
+  const found = BUSINESSES.find((b) => b.slug === slug);
+  return found || null;
+}
+
+export async function getBusinessesByCategory(category: string): Promise<Business[]> {
+  try {
+    const payload = await getPayloadClient();
+    if (payload) {
+      const res = await payload.find({
+        collection: "businesses",
+        where: { category: { equals: category } },
+        limit: 100,
+      });
+      if (res.docs.length > 0) {
+        return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+      }
+    }
+  } catch {
+    // Graceful fallback to mock data
+  }
+  return BUSINESSES.filter((b) => b.category === category);
+}
