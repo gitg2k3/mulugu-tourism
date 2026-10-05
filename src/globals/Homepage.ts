@@ -3,6 +3,9 @@ import type { GlobalConfig } from "payload";
 export const HomepageGlobal: GlobalConfig = {
   slug: "homepage",
   label: "Homepage Content",
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: "heroHeading",

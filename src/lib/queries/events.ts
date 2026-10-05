@@ -34,24 +34,22 @@ function mapDocToEvent(doc: EventDoc): TourismEvent {
 export async function getAllEvents(): Promise<TourismEvent[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "events",
       limit: 100,
     });
     return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
   } catch (error) {
-    console.error("Failed to query events from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query events from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve events.");
   }
 }
 
 export async function getUpcomingEvents(): Promise<TourismEvent[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "events",
       limit: 100,
@@ -59,16 +57,16 @@ export async function getUpcomingEvents(): Promise<TourismEvent[]> {
     });
     return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
   } catch (error) {
-    console.error("Failed to query upcoming events from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query upcoming events from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve upcoming events.");
   }
 }
 
 export async function getEventBySlug(slug: string): Promise<TourismEvent | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "events",
       where: { slug: { equals: slug } },
@@ -79,7 +77,9 @@ export async function getEventBySlug(slug: string): Promise<TourismEvent | null>
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query event "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query event "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve event "${slug}".`);
   }
 }

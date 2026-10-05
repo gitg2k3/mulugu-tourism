@@ -91,24 +91,22 @@ function mapDocToPlace(doc: PlaceDoc): Place {
 export async function getAllPlaces(): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "places",
       limit: 100,
     });
     return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
   } catch (error) {
-    console.error("Failed to query places from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query places from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve destinations.");
   }
 }
 
 export async function getFeaturedPlaces(): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "places",
       where: { isFeatured: { equals: true } },
@@ -116,16 +114,16 @@ export async function getFeaturedPlaces(): Promise<Place[]> {
     });
     return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
   } catch (error) {
-    console.error("Failed to query featured places from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query featured places from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve featured destinations.");
   }
 }
 
 export async function getPlaceBySlug(slug: string): Promise<Place | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "places",
       where: { slug: { equals: slug } },
@@ -136,16 +134,16 @@ export async function getPlaceBySlug(slug: string): Promise<Place | null> {
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query place "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query place "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve destination "${slug}".`);
   }
 }
 
 export async function getPlacesByCategory(category: string): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "places",
       where: { category: { equals: category } },
@@ -153,8 +151,10 @@ export async function getPlacesByCategory(category: string): Promise<Place[]> {
     });
     return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
   } catch (error) {
-    console.error(`Failed to query places by category "${category}" from Payload CMS:`, error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query places by category "${category}" from Payload CMS:`, sanitizedMsg);
+    throw new Error("Unable to retrieve category destinations.");
   }
 }
 

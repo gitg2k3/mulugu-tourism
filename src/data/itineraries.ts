@@ -20,56 +20,72 @@ export interface SeedItinerary {
 export const ITINERARIES: SeedItinerary[] = [
   {
     id: "itin-1",
-    slug: "weekend-mulugu-highlights",
-    title: "Weekend Heritage & Lakes (2 Days / 1 Night)",
-    duration: "2 Days",
+    slug: "ramappa-heritage-sunset-tour",
+    title: "Ramappa Heritage Sunset Tour",
+    duration: "1 Day Tour",
     summary:
-      "The quintessential Mulugu circuit covering Ramappa UNESCO Temple, sunset at Laknavaram Lake, and local cuisine.",
+      "Experience Ramappa's stunning UNESCO heritage and Laknavaram Lake on our most affordable guided tour.",
     highlights: [
-      "UNESCO Ramappa Temple",
-      "Laknavaram Suspension Bridge",
-      "Haritha Lake Cottages",
+      "3 destinations with 1 day tour",
+      "Pickup from Warangal / Hyderabad",
+      "Authentic Telangana traditional meal",
     ],
     coverImage:
       "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=800&q=80",
     days: [
       {
         day: 1,
+        title: "Day 1: UNESCO Wonders & Lake Sunset",
+        description: "Full day tour of Ramappa Temple, lunch, and Laknavaram sunset stroll.",
+        activities: ["Ramappa Guided Walk", "Kakatiya Canteen Lunch", "Suspension Bridge Sunset"],
+        recommendedPlaces: ["ramappa-temple", "laknavaram-lake"],
+      },
+    ],
+  },
+  {
+    id: "itin-2",
+    slug: "weekend-mulugu-highlights",
+    title: "Laknavaram Island Panorama",
+    duration: "2 Days Tour",
+    summary:
+      "Immerse yourself in majestic views: a comprehensive lake panorama, island cottages, and sunset boating.",
+    highlights: [
+      "5 destinations with 2 days tour",
+      "Pickup from Warangal / Hyderabad",
+      "Haritha Island cottage stay included",
+    ],
+    coverImage:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    days: [
+      {
+        day: 1,
         title: "Day 1: Arrival & UNESCO Wonders",
         description:
-          "Morning drive from Hyderabad/Warangal to Palampet. Guided exploration of Ramappa Temple, lunch at Kakatiya Canteen, and afternoon arrival at Laknavaram Lake for sunset suspension bridge stroll.",
-        activities: [
-          "Ramappa Guided Tour",
-          "Kakatiya Canteen Lunch",
-          "Laknavaram Sunset Walk",
-        ],
+          "Morning drive to Palampet. Guided exploration of Ramappa Temple and afternoon arrival at Laknavaram Lake.",
+        activities: ["Ramappa Guided Tour", "Laknavaram Sunset Walk"],
         recommendedPlaces: ["ramappa-temple", "laknavaram-lake"],
       },
       {
         day: 2,
         title: "Day 2: Eco-Forests & Waterways",
         description:
-          "Sunrise boat tour on Laknavaram, followed by journey to Tadvai Reserve for forest canopy walk and Medaram cultural heritage visit.",
-        activities: [
-          "Morning Boat Safari",
-          "Tadvai Canopy Walk",
-          "Medaram Shrine Visit",
-        ],
+          "Sunrise boat tour on Laknavaram, followed by journey to Tadvai Reserve for forest canopy walk.",
+        activities: ["Morning Boat Safari", "Tadvai Canopy Walk"],
         recommendedPlaces: ["tadvai-eco-huts", "medaram-sammakka-sarakka"],
       },
     ],
   },
   {
-    id: "itin-2",
+    id: "itin-3",
     slug: "wild-waterfalls-and-tribal-lore",
-    title: "Wild Waterfalls & Tribal Trail (3 Days / 2 Nights)",
-    duration: "3 Days",
+    title: "Bogatha Scenic Picnic & Trek",
+    duration: "2 Days Tour",
     summary:
-      "An adventurous escape covering Bogatha waterfalls, Tadvai deep forest canopy walks, and Medaram tribal shrine.",
+      "Enjoy a relaxing day at Bogatha: scenic picnic packages, waterfall plunge, and Cheekupally stream trails.",
     highlights: [
-      "Bogatha Waterfall Trek",
-      "Tadvai Eco-Park Canopy Walk",
-      "Medaram Gadde Shrine",
+      "7 destinations with 2 days tour",
+      "Pickup from Warangal / Hyderabad",
+      "Forest campfire & local tribal meal",
     ],
     coverImage:
       "https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=800&q=80",
@@ -77,24 +93,52 @@ export const ITINERARIES: SeedItinerary[] = [
       {
         day: 1,
         title: "Day 1: Waterfalls & Teak Forests",
-        description:
-          "Journey deep along NH 163 to Bogatha Waterfalls for hiking, viewing galleries, and forest streams.",
+        description: "Journey deep along NH 163 to Bogatha Waterfalls for hiking and natural pool swims.",
         activities: ["Bogatha Waterfall Hike", "Forest Trail Photography"],
         recommendedPlaces: ["bogatha-waterfall"],
       },
       {
         day: 2,
         title: "Day 2: Tadvai Canopy & Wildlife",
-        description:
-          "Explore the ancient Eturnagaram forest corridor, wildlife canopy walk, and overnight log hut stay.",
-        activities: ["Canopy Walk", "Birdwatching Safari", "Night Stargazing"],
+        description: "Explore the ancient Eturnagaram forest corridor and wildlife canopy walk.",
+        activities: ["Canopy Walk", "Birdwatching Safari"],
         recommendedPlaces: ["tadvai-eco-huts"],
+      },
+    ],
+  },
+  {
+    id: "itin-4",
+    slug: "extraordinary-mulugu-expedition",
+    title: "Extraordinary Grand Expedition",
+    duration: "3 Days Tour",
+    summary:
+      "Unforgettable moments await: embark on an extraordinary grand heritage and wilderness circuit across Mulugu.",
+    highlights: [
+      "12 destinations with 3 days tour",
+      "Pickup from Warangal / Hyderabad",
+      "Luxury eco-cottages & cultural show",
+    ],
+    coverImage:
+      "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+    days: [
+      {
+        day: 1,
+        title: "Day 1: Ramappa & Laknavaram",
+        description: "UNESCO World Heritage Ramappa Temple and Laknavaram Lake night camping.",
+        activities: ["Heritage Architecture Walk", "Lake Kayaking"],
+        recommendedPlaces: ["ramappa-temple", "laknavaram-lake"],
+      },
+      {
+        day: 2,
+        title: "Day 2: Bogatha & Deep Wildwoods",
+        description: "Waterfalls trek and Eturnagaram wildlife sanctuary safari.",
+        activities: ["Waterfall Trek", "Night Safari"],
+        recommendedPlaces: ["bogatha-waterfall", "tadvai-eco-huts"],
       },
       {
         day: 3,
         title: "Day 3: Sacred Tribal Shrines",
-        description:
-          "Pay homage at Medaram Sammakka Sarakka Gadde and explore Giri Gramodhyog tribal crafts market before departure.",
+        description: "Medaram Sammakka Sarakka Gadde shrine and Koya tribal handicrafts.",
         activities: ["Medaram Darshan", "Tribal Handicrafts Shopping"],
         recommendedPlaces: ["medaram-sammakka-sarakka"],
       },

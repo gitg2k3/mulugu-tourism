@@ -59,24 +59,22 @@ function mapDocToBusiness(doc: BusinessDoc): Business {
 export async function getAllBusinesses(): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "businesses",
       limit: 100,
     });
     return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
   } catch (error) {
-    console.error("Failed to query businesses from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query businesses from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve businesses.");
   }
 }
 
 export async function getFeaturedBusinesses(): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "businesses",
       where: { isFeatured: { equals: true } },
@@ -84,16 +82,16 @@ export async function getFeaturedBusinesses(): Promise<Business[]> {
     });
     return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
   } catch (error) {
-    console.error("Failed to query featured businesses from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query featured businesses from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve featured businesses.");
   }
 }
 
 export async function getBusinessBySlug(slug: string): Promise<Business | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "businesses",
       where: { slug: { equals: slug } },
@@ -104,16 +102,16 @@ export async function getBusinessBySlug(slug: string): Promise<Business | null> 
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query business "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query business "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve business "${slug}".`);
   }
 }
 
 export async function getBusinessesByCategory(category: string): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "businesses",
       where: { category: { equals: category } },
@@ -121,8 +119,10 @@ export async function getBusinessesByCategory(category: string): Promise<Busines
     });
     return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
   } catch (error) {
-    console.error(`Failed to query businesses by category "${category}" from Payload CMS:`, error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query businesses by category "${category}" from Payload CMS:`, sanitizedMsg);
+    throw new Error("Unable to retrieve category businesses.");
   }
 }
 

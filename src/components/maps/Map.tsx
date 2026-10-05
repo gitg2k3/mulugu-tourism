@@ -12,9 +12,9 @@ interface MapProps {
 }
 
 export function Map({ places }: MapProps) {
-  const [selectedPlace, setSelectedPlace] = useState<Place>(places[0]);
+  const [selectedPlace, setSelectedPlace] = useState<Place | undefined>(places[0]);
 
-  const mapEmbedUrl = selectedPlace
+  const mapEmbedUrl = selectedPlace?.coordinates
     ? `https://maps.google.com/maps?q=${selectedPlace.coordinates.lat},${selectedPlace.coordinates.lng}&z=14&output=embed`
     : `https://maps.google.com/maps?q=18.2588,79.9431&z=11&output=embed`;
 
@@ -33,14 +33,20 @@ export function Map({ places }: MapProps) {
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
-          {places.map((place) => (
-            <MapMarker
-              key={place.id}
-              place={place}
-              isSelected={selectedPlace?.id === place.id}
-              onSelect={setSelectedPlace}
-            />
-          ))}
+          {places.length === 0 ? (
+            <div className="py-8 text-center text-xs text-zinc-500">
+              No destinations currently available.
+            </div>
+          ) : (
+            places.map((place) => (
+              <MapMarker
+                key={place.id}
+                place={place}
+                isSelected={selectedPlace?.id === place.id}
+                onSelect={setSelectedPlace}
+              />
+            ))
+          )}
         </div>
 
         {selectedPlace && (

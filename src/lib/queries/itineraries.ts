@@ -60,24 +60,22 @@ function mapDocToItinerary(doc: ItineraryDoc): Itinerary {
 export async function getAllItineraries(): Promise<Itinerary[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "itineraries",
       limit: 100,
     });
     return (res.docs as unknown as ItineraryDoc[]).map(mapDocToItinerary);
   } catch (error) {
-    console.error("Failed to query itineraries from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query itineraries from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve itineraries.");
   }
 }
 
 export async function getItineraryBySlug(slug: string): Promise<Itinerary | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "itineraries",
       where: { slug: { equals: slug } },
@@ -88,7 +86,9 @@ export async function getItineraryBySlug(slug: string): Promise<Itinerary | null
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query itinerary "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query itinerary "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve itinerary "${slug}".`);
   }
 }

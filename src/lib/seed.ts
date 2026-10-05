@@ -259,6 +259,71 @@ export async function seedDatabase() {
     console.log("  ~ Admin user already exists");
   }
 
+  // 8. Seed Globals (site-settings, homepage, footer)
+  console.log("Checking CMS globals...");
+  try {
+    const siteSettings = await payload.findGlobal({ slug: "site-settings" });
+    if (!siteSettings?.siteName) {
+      await payload.updateGlobal({
+        slug: "site-settings",
+        data: {
+          siteName: "Discover Mulugu",
+          tagline: "The UNESCO Heritage & Eco-Tourism Capital of Telangana",
+          contactPhone: "+91 8715 220000",
+          contactEmail: "contact@discovermulugu.org",
+          emergencyPolice: "100",
+          emergencyAmbulance: "108",
+          emergencyForestHelpline: "1800 425 5364",
+        },
+      });
+      console.log("  + Initialized site-settings global");
+    } else {
+      console.log("  ~ site-settings global already configured");
+    }
+  } catch (err) {
+    console.warn("  ~ Notice: site-settings global:", err);
+  }
+
+  try {
+    const homepage = await payload.findGlobal({ slug: "homepage" });
+    if (!homepage?.heroHeading) {
+      await payload.updateGlobal({
+        slug: "homepage",
+        data: {
+          heroHeading: "Discover Mulugu: Sacred Temples & Untamed Wilderness",
+          heroSubtitle:
+            "Home to the UNESCO World Heritage Ramappa Temple, Laknavaram's 13 island lakes, roaring Bogatha Falls, and the spiritual power of Medaram Jatara.",
+          heroBackgroundUrl:
+            "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1920&q=80",
+        },
+      });
+      console.log("  + Initialized homepage global");
+    } else {
+      console.log("  ~ homepage global already configured");
+    }
+  } catch (err) {
+    console.warn("  ~ Notice: homepage global:", err);
+  }
+
+  try {
+    const footer = await payload.findGlobal({ slug: "footer" });
+    if (!footer?.aboutText) {
+      await payload.updateGlobal({
+        slug: "footer",
+        data: {
+          aboutText:
+            "An independent community eco-tourism initiative dedicated to showcasing Mulugu's rich Kakatiya heritage, pristine nature, and local cultural traditions.",
+          copyright: "© 2026 Discover Mulugu. All rights reserved.",
+        },
+      });
+      console.log("  + Initialized footer global");
+    } else {
+      console.log("  ~ footer global already configured");
+    }
+  } catch (err) {
+    console.warn("  ~ Notice: footer global:", err);
+  }
+
   console.log("✅ Seed completed successfully!");
 }
 

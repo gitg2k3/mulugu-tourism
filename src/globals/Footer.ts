@@ -3,6 +3,9 @@ import type { GlobalConfig } from "payload";
 export const FooterGlobal: GlobalConfig = {
   slug: "footer",
   label: "Footer Content",
+  access: {
+    read: () => true,
+  },
   fields: [
     {
       name: "aboutText",

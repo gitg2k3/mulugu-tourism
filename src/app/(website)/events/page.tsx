@@ -31,49 +31,57 @@ export default async function EventsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {events.map((event) => (
-            <div
-              key={event.id}
-              className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col justify-between"
-            >
-              <div>
-                <div className="relative aspect-[16/10] bg-zinc-800">
-                  <Image src={event.coverImage} alt={event.title} fill className="object-cover" />
-                  <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-emerald-300">
-                    {event.category}
+        {events.length === 0 ? (
+          <div className="py-16 text-center rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-800 p-8">
+            <p className="text-zinc-600 dark:text-zinc-400 font-medium">
+              No upcoming events found.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {events.map((event) => (
+              <div
+                key={event.id}
+                className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative aspect-[16/10] bg-zinc-800">
+                    <Image src={event.coverImage} alt={event.title} fill className="object-cover" />
+                    <div className="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-emerald-300">
+                      {event.category}
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-2">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>{formatDate(event.startDate)}</span>
+                    </div>
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white">
+                      {event.title}
+                    </h3>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
+                      {event.description}
+                    </p>
                   </div>
                 </div>
 
-                <div className="p-6">
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-2">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{formatDate(event.startDate)}</span>
+                <div className="p-6 pt-0 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center gap-1 text-xs text-zinc-500 truncate">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span className="truncate">{event.location}</span>
                   </div>
-                  <h3 className="font-bold text-lg text-zinc-900 dark:text-white">
-                    {event.title}
-                  </h3>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-2 leading-relaxed">
-                    {event.description}
-                  </p>
+                  <Link
+                    href={`/events/${event.slug}`}
+                    className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 ml-2"
+                  >
+                    Details &rarr;
+                  </Link>
                 </div>
               </div>
-
-              <div className="p-6 pt-0 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800">
-                <div className="flex items-center gap-1 text-xs text-zinc-500 truncate">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span className="truncate">{event.location}</span>
-                </div>
-                <Link
-                  href={`/events/${event.slug}`}
-                  className="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline shrink-0 ml-2"
-                >
-                  Details &rarr;
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </Container>
     </div>
   );

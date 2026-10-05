@@ -24,24 +24,22 @@ function mapDocToCategory(doc: CategoryDoc): Category {
 export async function getAllCategories(): Promise<Category[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "categories",
       limit: 100,
     });
     return (res.docs as unknown as CategoryDoc[]).map(mapDocToCategory);
   } catch (error) {
-    console.error("Failed to query categories from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query categories from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve categories.");
   }
 }
 
 export async function getCategoryBySlug(slug: string): Promise<Category | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "categories",
       where: { slug: { equals: slug } },
@@ -52,7 +50,9 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query category "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query category "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve category "${slug}".`);
   }
 }

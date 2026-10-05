@@ -43,24 +43,22 @@ function mapDocToArticle(doc: ArticleDoc): Article {
 export async function getAllArticles(): Promise<Article[]> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return [];
-
     const res = await payload.find({
       collection: "articles",
       limit: 100,
     });
     return (res.docs as unknown as ArticleDoc[]).map(mapDocToArticle);
   } catch (error) {
-    console.error("Failed to query articles from Payload CMS:", error);
-    return [];
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error("Failed to query articles from Payload CMS:", sanitizedMsg);
+    throw new Error("Unable to retrieve articles.");
   }
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
   try {
     const payload = await getPayloadClient();
-    if (!payload) return null;
-
     const res = await payload.find({
       collection: "articles",
       where: { slug: { equals: slug } },
@@ -71,7 +69,9 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     }
     return null;
   } catch (error) {
-    console.error(`Failed to query article "${slug}" from Payload CMS:`, error);
-    return null;
+    const rawMsg = error instanceof Error ? error.message : String(error);
+    const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
+    console.error(`Failed to query article "${slug}" from Payload CMS:`, sanitizedMsg);
+    throw new Error(`Unable to retrieve article "${slug}".`);
   }
 }

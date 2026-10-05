@@ -1,9 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import { MapPin, Phone, Mail, ShieldCheck } from "lucide-react";
+import { ShieldCheck, PhoneCall, Trees, Compass } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
-import { Container } from "@/components/ui/Container";
 import { getSiteSettingsGlobal, getFooterGlobal } from "@/lib/queries/homepage";
+import StarburstThanksFooter, { FooterLink } from "@/components/ui/starburst-thanks-footer";
 
 export async function Footer() {
   const [siteSettings, footerData] = await Promise.all([
@@ -13,147 +13,154 @@ export async function Footer() {
 
   const helpline = siteSettings.contactPhone || SITE_CONFIG.contact.helpline;
   const email = siteSettings.contactEmail || SITE_CONFIG.contact.email;
-  const aboutText = footerData.aboutText || SITE_CONFIG.description;
   const copyright = footerData.copyright || `© ${new Date().getFullYear()} Discover Mulugu. All rights reserved.`;
 
+  const destinationLinks: FooterLink[] = [
+    {
+      caption: "UNESCO World Heritage",
+      label: "Ramappa Temple",
+      href: "/places/ramappa-temple",
+    },
+    {
+      caption: "Suspension Bridge & Lake",
+      label: "Laknavaram Lake",
+      href: "/places/laknavaram-lake",
+    },
+    {
+      caption: "Telangana Niagara",
+      label: "Bogatha Waterfalls",
+      href: "/places/bogatha-waterfall",
+    },
+    {
+      caption: "Asia's Largest Tribal Fair",
+      label: "Medaram Jatara",
+      href: "/places/medaram-sammakka-sarakka",
+    },
+    {
+      caption: "Forest Cottages & Canopy",
+      label: "Tadvai Eco-Huts",
+      href: "/places/tadvai-eco-huts",
+    },
+    {
+      caption: "Resorts & Local Food",
+      label: "Tourism Directory",
+      href: "/businesses",
+    },
+    {
+      caption: "Live Destination Guide",
+      label: "District Map",
+      href: "/map",
+    },
+  ];
+
+  const customLogo = (
+    <div className="flex flex-col items-center gap-2 text-center select-none">
+      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#188BAF]/20 border border-[#188BAF]/40 text-[#188BAF] text-xs font-semibold tracking-wide uppercase">
+        <ShieldCheck className="w-3.5 h-3.5 text-[#EFA316]" />
+        <span>UNESCO Heritage &amp; Eco-Tourism Capital</span>
+      </div>
+      <div className="flex items-center gap-2.5 mt-1">
+        <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white font-heading">
+          {siteSettings.siteName || SITE_CONFIG.name}
+        </span>
+        <span className="text-xs px-2 py-0.5 rounded bg-[#EFA316]/20 text-[#EFA316] font-medium border border-[#EFA316]/40 hidden sm:inline-block">
+          {SITE_CONFIG.teluguName}
+        </span>
+      </div>
+      <p className="text-xs text-zinc-400 max-w-md">
+        {footerData.aboutText || SITE_CONFIG.description}
+      </p>
+    </div>
+  );
+
+  const bottomSlot = (
+    <div className="max-w-6xl mx-auto px-4 space-y-8 text-zinc-400">
+      {/* Quick Helplines Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-6 border-b border-white/10 text-xs">
+        <div className="flex items-center justify-center sm:justify-start gap-2.5 bg-white/5 px-4 py-2.5 rounded-lg border border-white/5">
+          <PhoneCall className="w-4 h-4 text-[#EFA316] shrink-0" />
+          <div>
+            <div className="text-zinc-500 uppercase tracking-wider text-[10px]">Tourism Helpline</div>
+            <a href={`tel:${helpline}`} className="text-zinc-200 font-semibold hover:text-[#EFA316] transition-colors">
+              {helpline}
+            </a>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center sm:justify-start gap-2.5 bg-white/5 px-4 py-2.5 rounded-lg border border-white/5">
+          <Trees className="w-4 h-4 text-[#258C42] shrink-0" />
+          <div>
+            <div className="text-zinc-500 uppercase tracking-wider text-[10px]">Forest &amp; Eco Helpline</div>
+            <a
+              href={`tel:${siteSettings.emergencyForestHelpline || "18004255364"}`}
+              className="text-zinc-200 font-semibold hover:text-[#258C42] transition-colors"
+            >
+              {siteSettings.emergencyForestHelpline || "1800-425-5364"}
+            </a>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center sm:justify-start gap-2.5 bg-white/5 px-4 py-2.5 rounded-lg border border-white/5">
+          <Compass className="w-4 h-4 text-[#1D72FE] shrink-0" />
+          <div>
+            <div className="text-zinc-500 uppercase tracking-wider text-[10px]">Police &amp; Medical Emergency</div>
+            <span className="text-zinc-200 font-semibold">
+              Police: {siteSettings.emergencyPolice || "100"} | Med: {siteSettings.emergencyAmbulance || "108"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation & Legal Links */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-400">
+        <div className="space-y-1 text-center md:text-left">
+          <p className="text-zinc-300 font-medium">{copyright}</p>
+          <p className="text-[11px] text-zinc-500 max-w-xl">
+            Discover Mulugu is an independent travel &amp; eco-tourism guide and is not affiliated with or endorsed by any government entity.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-zinc-400">
+          <Link href="/about" className="hover:text-white transition-colors">
+            About Mulugu
+          </Link>
+          <Link href="/itineraries" className="hover:text-white transition-colors">
+            Itineraries
+          </Link>
+          <Link href="/map" className="hover:text-white transition-colors">
+            Interactive Map
+          </Link>
+          <Link href="/events" className="hover:text-white transition-colors">
+            Jatara &amp; Festivals
+          </Link>
+          <Link href="/admin" className="text-zinc-600 hover:text-zinc-400 transition-colors">
+            Admin Portal
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <footer className="bg-zinc-950 text-zinc-300 border-t border-zinc-800 pt-16 pb-12 mt-auto">
-      <Container size="xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-zinc-800/80">
-          {/* Column 1: Brand Info */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <span className="font-extrabold text-2xl text-white tracking-tight">
-                {siteSettings.siteName || SITE_CONFIG.name}
-              </span>
-            </div>
-            <p className="text-sm text-zinc-400 leading-relaxed">
-              {aboutText}
-            </p>
-            <div className="pt-2">
-              <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-1.5 rounded-full">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                Community Tourism & Heritage Guide
-              </span>
-            </div>
-          </div>
-
-          {/* Column 2: Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Explore Destinations
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/places/ramappa-temple" className="hover:text-emerald-400 transition-colors">
-                  Ramappa Temple (UNESCO)
-                </Link>
-              </li>
-              <li>
-                <Link href="/places/laknavaram-lake" className="hover:text-emerald-400 transition-colors">
-                  Laknavaram Suspension Bridge
-                </Link>
-              </li>
-              <li>
-                <Link href="/places/bogatha-waterfall" className="hover:text-emerald-400 transition-colors">
-                  Bogatha Waterfalls
-                </Link>
-              </li>
-              <li>
-                <Link href="/places/medaram-sammakka-sarakka" className="hover:text-emerald-400 transition-colors">
-                  Medaram Sammakka Sarakka
-                </Link>
-              </li>
-              <li>
-                <Link href="/places/tadvai-eco-huts" className="hover:text-emerald-400 transition-colors">
-                  Tadvai Forest Eco-Tourism
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Tourism Highlights & Directory */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Visitor Information
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link href="/businesses" className="hover:text-emerald-400 transition-colors">
-                  Resorts, Stays & Food Directory
-                </Link>
-              </li>
-              <li>
-                <Link href="/events" className="hover:text-emerald-400 transition-colors">
-                  Medaram Jatara & Festivals
-                </Link>
-              </li>
-              <li>
-                <Link href="/itineraries" className="hover:text-emerald-400 transition-colors">
-                  Suggested Travel Itineraries
-                </Link>
-              </li>
-              <li>
-                <Link href="/map" className="hover:text-emerald-400 transition-colors">
-                  Interactive District Map
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-emerald-400 transition-colors">
-                  About Mulugu District
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Contact & Emergency Helplines */}
-          <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Emergency & Helplines
-            </h4>
-            <div className="space-y-3 text-sm text-zinc-400">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>{SITE_CONFIG.contact.address}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`tel:${helpline}`} className="hover:text-white transition-colors">
-                  Helpline: {helpline}
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`mailto:${email}`} className="hover:text-white transition-colors">
-                  {email}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-zinc-500 gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <p>{copyright}</p>
-            <p className="text-[11px] text-zinc-600">
-              Discover Mulugu is an independent travel &amp; eco-tourism guide and is not affiliated with or endorsed by any government entity.
-            </p>
-          </div>
-          <div className="flex items-center gap-6 shrink-0">
-            <Link href="/about" className="hover:text-zinc-300 transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/about" className="hover:text-zinc-300 transition-colors">
-              Terms of Use
-            </Link>
-            <Link href="/admin" className="text-zinc-600 hover:text-zinc-400 transition-colors">
-              Admin Portal
-            </Link>
-          </div>
-        </div>
-      </Container>
-    </footer>
+    <div className="w-full mt-auto">
+      <StarburstThanksFooter
+        name={siteSettings.siteName || SITE_CONFIG.name}
+        logo={customLogo}
+        thanks={["Dhanyavadalu", "Namaskaram", "Johar", "Thank you", "Swagatam", "Vandanalu"]}
+        tagline="for exploring mulugu"
+        signoff="Preserve sacred forests, honor tribal traditions & travel responsibly."
+        links={destinationLinks}
+        email={email}
+        phone={helpline}
+        copiedLabel="Contact Copied!"
+        height="auto"
+        background="#071326"
+        ink="#F6F8FA"
+        accent="#EFA316"
+        starPoints={12}
+        bottomSlot={bottomSlot}
+      />
+    </div>
   );
 }
 
