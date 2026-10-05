@@ -4,6 +4,8 @@ import path from "path";
 import { buildConfig } from "payload";
 import { fileURLToPath } from "url";
 
+import sharp from "sharp";
+
 import PlacesCollection from "./collections/Places";
 import BusinessesCollection from "./collections/Businesses";
 import CategoriesCollection from "./collections/Categories";
@@ -20,9 +22,17 @@ import FooterGlobal from "./globals/Footer";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+const getServerUrl = () => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+};
+
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  serverURL: getServerUrl(),
   secret: process.env.PAYLOAD_SECRET || "mulugu_tourism_default_secret_key_change_in_production",
+  sharp,
   admin: {
     user: UsersCollection.slug,
     meta: {
@@ -52,7 +62,8 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || "",
       ssl:
         process.env.DATABASE_URI?.includes("neon.tech") ||
-        process.env.DATABASE_URI?.includes("sslmode=require")
+        process.env.DATABASE_URI?.includes("sslmode=require") ||
+        process.env.NODE_ENV === "production"
           ? { rejectUnauthorized: false }
           : undefined,
     },

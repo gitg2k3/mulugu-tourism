@@ -56,6 +56,8 @@ function mapDocToBusiness(doc: BusinessDoc): Business {
   };
 }
 
+import { BUSINESSES } from "@/data/businesses";
+
 export async function getAllBusinesses(): Promise<Business[]> {
   try {
     const payload = await getPayloadClient();
@@ -63,12 +65,15 @@ export async function getAllBusinesses(): Promise<Business[]> {
       collection: "businesses",
       limit: 100,
     });
-    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    }
+    return BUSINESSES;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query businesses from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve businesses.");
+    console.warn("Using fallback businesses data. Reason:", sanitizedMsg);
+    return BUSINESSES;
   }
 }
 
@@ -80,12 +85,15 @@ export async function getFeaturedBusinesses(): Promise<Business[]> {
       where: { isFeatured: { equals: true } },
       limit: 100,
     });
-    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    }
+    return BUSINESSES.filter((b) => b.isFeatured);
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query featured businesses from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve featured businesses.");
+    console.warn("Using fallback featured businesses data. Reason:", sanitizedMsg);
+    return BUSINESSES.filter((b) => b.isFeatured);
   }
 }
 
@@ -97,15 +105,15 @@ export async function getBusinessBySlug(slug: string): Promise<Business | null> 
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToBusiness(res.docs[0] as unknown as BusinessDoc);
     }
-    return null;
+    return BUSINESSES.find((b) => b.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query business "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve business "${slug}".`);
+    console.warn(`Using fallback business data for "${slug}". Reason:`, sanitizedMsg);
+    return BUSINESSES.find((b) => b.slug === slug) || null;
   }
 }
 
@@ -117,12 +125,15 @@ export async function getBusinessesByCategory(category: string): Promise<Busines
       where: { category: { equals: category } },
       limit: 100,
     });
-    return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as BusinessDoc[]).map(mapDocToBusiness);
+    }
+    return BUSINESSES.filter((b) => b.category === category);
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query businesses by category "${category}" from Payload CMS:`, sanitizedMsg);
-    throw new Error("Unable to retrieve category businesses.");
+    console.warn(`Using fallback category businesses data for "${category}". Reason:`, sanitizedMsg);
+    return BUSINESSES.filter((b) => b.category === category);
   }
 }
 

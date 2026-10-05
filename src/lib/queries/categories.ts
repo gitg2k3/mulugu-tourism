@@ -21,6 +21,8 @@ function mapDocToCategory(doc: CategoryDoc): Category {
   };
 }
 
+import { CATEGORIES } from "@/data/categories";
+
 export async function getAllCategories(): Promise<Category[]> {
   try {
     const payload = await getPayloadClient();
@@ -28,12 +30,15 @@ export async function getAllCategories(): Promise<Category[]> {
       collection: "categories",
       limit: 100,
     });
-    return (res.docs as unknown as CategoryDoc[]).map(mapDocToCategory);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as CategoryDoc[]).map(mapDocToCategory);
+    }
+    return CATEGORIES;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query categories from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve categories.");
+    console.warn("Using fallback categories data. Reason:", sanitizedMsg);
+    return CATEGORIES;
   }
 }
 
@@ -45,14 +50,14 @@ export async function getCategoryBySlug(slug: string): Promise<Category | null> 
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToCategory(res.docs[0] as unknown as CategoryDoc);
     }
-    return null;
+    return CATEGORIES.find((c) => c.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query category "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve category "${slug}".`);
+    console.warn(`Using fallback category data for "${slug}". Reason:`, sanitizedMsg);
+    return CATEGORIES.find((c) => c.slug === slug) || null;
   }
 }

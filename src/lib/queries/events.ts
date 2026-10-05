@@ -31,6 +31,8 @@ function mapDocToEvent(doc: EventDoc): TourismEvent {
   };
 }
 
+import { EVENTS } from "@/data/events";
+
 export async function getAllEvents(): Promise<TourismEvent[]> {
   try {
     const payload = await getPayloadClient();
@@ -38,12 +40,15 @@ export async function getAllEvents(): Promise<TourismEvent[]> {
       collection: "events",
       limit: 100,
     });
-    return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+    }
+    return EVENTS;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query events from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve events.");
+    console.warn("Using fallback events data. Reason:", sanitizedMsg);
+    return EVENTS;
   }
 }
 
@@ -55,12 +60,15 @@ export async function getUpcomingEvents(): Promise<TourismEvent[]> {
       limit: 100,
       sort: "startDate",
     });
-    return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as EventDoc[]).map(mapDocToEvent);
+    }
+    return EVENTS;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query upcoming events from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve upcoming events.");
+    console.warn("Using fallback upcoming events data. Reason:", sanitizedMsg);
+    return EVENTS;
   }
 }
 
@@ -72,14 +80,14 @@ export async function getEventBySlug(slug: string): Promise<TourismEvent | null>
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToEvent(res.docs[0] as unknown as EventDoc);
     }
-    return null;
+    return EVENTS.find((e) => e.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query event "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve event "${slug}".`);
+    console.warn(`Using fallback event data for "${slug}". Reason:`, sanitizedMsg);
+    return EVENTS.find((e) => e.slug === slug) || null;
   }
 }

@@ -88,6 +88,8 @@ function mapDocToPlace(doc: PlaceDoc): Place {
   };
 }
 
+import { PLACES } from "@/data/places";
+
 export async function getAllPlaces(): Promise<Place[]> {
   try {
     const payload = await getPayloadClient();
@@ -95,12 +97,15 @@ export async function getAllPlaces(): Promise<Place[]> {
       collection: "places",
       limit: 100,
     });
-    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    }
+    return PLACES;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query places from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve destinations.");
+    console.warn("Using fallback places data. Reason:", sanitizedMsg);
+    return PLACES;
   }
 }
 
@@ -112,12 +117,15 @@ export async function getFeaturedPlaces(): Promise<Place[]> {
       where: { isFeatured: { equals: true } },
       limit: 100,
     });
-    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    }
+    return PLACES.filter((p) => p.isFeatured);
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query featured places from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve featured destinations.");
+    console.warn("Using fallback featured places data. Reason:", sanitizedMsg);
+    return PLACES.filter((p) => p.isFeatured);
   }
 }
 
@@ -129,15 +137,15 @@ export async function getPlaceBySlug(slug: string): Promise<Place | null> {
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToPlace(res.docs[0] as unknown as PlaceDoc);
     }
-    return null;
+    return PLACES.find((p) => p.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query place "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve destination "${slug}".`);
+    console.warn(`Using fallback place data for "${slug}". Reason:`, sanitizedMsg);
+    return PLACES.find((p) => p.slug === slug) || null;
   }
 }
 
@@ -149,12 +157,15 @@ export async function getPlacesByCategory(category: string): Promise<Place[]> {
       where: { category: { equals: category } },
       limit: 100,
     });
-    return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as PlaceDoc[]).map(mapDocToPlace);
+    }
+    return PLACES.filter((p) => p.category === category);
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query places by category "${category}" from Payload CMS:`, sanitizedMsg);
-    throw new Error("Unable to retrieve category destinations.");
+    console.warn(`Using fallback category places data for "${category}". Reason:`, sanitizedMsg);
+    return PLACES.filter((p) => p.category === category);
   }
 }
 

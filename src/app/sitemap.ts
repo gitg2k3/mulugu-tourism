@@ -29,11 +29,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const [places, businesses, events, articles, itineraries] = await Promise.all([
-    getAllPlaces(),
-    getAllBusinesses(),
-    getAllEvents(),
-    getAllArticles(),
-    getAllItineraries(),
+    getAllPlaces().catch(() => []),
+    getAllBusinesses().catch(() => []),
+    getAllEvents().catch(() => []),
+    getAllArticles().catch(() => []),
+    getAllItineraries().catch(() => []),
   ]);
 
   const placeRoutes = places.map((place) => ({

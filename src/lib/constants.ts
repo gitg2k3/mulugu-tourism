@@ -1,10 +1,17 @@
+const getSiteUrl = () => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "https://discovermulugu.org";
+};
+
 export const SITE_CONFIG = {
   name: "Discover Mulugu",
   teluguName: "డిస్కవర్ ములుగు",
   tagline: "The UNESCO Heritage & Eco-Tourism Capital of Telangana",
   description:
     "Explore the breathtaking UNESCO World Heritage Ramappa Temple, scenic Laknavaram Lake, cascading Bogatha Waterfalls, and the largest tribal congregation Medaram Jatara.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://discovermulugu.org",
+  url: getSiteUrl(),
   contact: {
     helpline: "+91 8715 220000",
     email: "contact@discovermulugu.org",

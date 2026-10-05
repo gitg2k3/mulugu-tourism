@@ -40,6 +40,8 @@ function mapDocToArticle(doc: ArticleDoc): Article {
   };
 }
 
+import { ARTICLES } from "@/data/articles";
+
 export async function getAllArticles(): Promise<Article[]> {
   try {
     const payload = await getPayloadClient();
@@ -47,12 +49,15 @@ export async function getAllArticles(): Promise<Article[]> {
       collection: "articles",
       limit: 100,
     });
-    return (res.docs as unknown as ArticleDoc[]).map(mapDocToArticle);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as ArticleDoc[]).map(mapDocToArticle);
+    }
+    return ARTICLES;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query articles from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve articles.");
+    console.warn("Using fallback articles data. Reason:", sanitizedMsg);
+    return ARTICLES;
   }
 }
 
@@ -64,14 +69,14 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToArticle(res.docs[0] as unknown as ArticleDoc);
     }
-    return null;
+    return ARTICLES.find((a) => a.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query article "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve article "${slug}".`);
+    console.warn(`Using fallback article data for "${slug}". Reason:`, sanitizedMsg);
+    return ARTICLES.find((a) => a.slug === slug) || null;
   }
 }

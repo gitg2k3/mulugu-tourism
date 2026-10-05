@@ -57,6 +57,8 @@ function mapDocToItinerary(doc: ItineraryDoc): Itinerary {
   };
 }
 
+import { ITINERARIES } from "@/data/itineraries";
+
 export async function getAllItineraries(): Promise<Itinerary[]> {
   try {
     const payload = await getPayloadClient();
@@ -64,12 +66,15 @@ export async function getAllItineraries(): Promise<Itinerary[]> {
       collection: "itineraries",
       limit: 100,
     });
-    return (res.docs as unknown as ItineraryDoc[]).map(mapDocToItinerary);
+    if (res.docs && res.docs.length > 0) {
+      return (res.docs as unknown as ItineraryDoc[]).map(mapDocToItinerary);
+    }
+    return ITINERARIES;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error("Failed to query itineraries from Payload CMS:", sanitizedMsg);
-    throw new Error("Unable to retrieve itineraries.");
+    console.warn("Using fallback itineraries data. Reason:", sanitizedMsg);
+    return ITINERARIES;
   }
 }
 
@@ -81,14 +86,14 @@ export async function getItineraryBySlug(slug: string): Promise<Itinerary | null
       where: { slug: { equals: slug } },
       limit: 1,
     });
-    if (res.docs.length > 0) {
+    if (res.docs && res.docs.length > 0) {
       return mapDocToItinerary(res.docs[0] as unknown as ItineraryDoc);
     }
-    return null;
+    return ITINERARIES.find((i) => i.slug === slug) || null;
   } catch (error) {
     const rawMsg = error instanceof Error ? error.message : String(error);
     const sanitizedMsg = rawMsg.replace(/postgres(?:ql)?:\/\/[^@\s]+@/gi, "postgresql://[REDACTED]@");
-    console.error(`Failed to query itinerary "${slug}" from Payload CMS:`, sanitizedMsg);
-    throw new Error(`Unable to retrieve itinerary "${slug}".`);
+    console.warn(`Using fallback itinerary data for "${slug}". Reason:`, sanitizedMsg);
+    return ITINERARIES.find((i) => i.slug === slug) || null;
   }
 }

@@ -94,3 +94,9 @@ npm run dev
 - `npm run lint` — Run ESLint checks
 - `npm run seed` — Run idempotent database seeder
 - `npm run start` — Run production server
+
+---
+
+## Deployment to Vercel
+
+For complete step-by-step instructions on deploying this project with PostgreSQL (Neon, Supabase, Vercel Postgres) on Vercel, see [VERCEL_DEPLOYMENT.md](file:///c:/Users/ganes/Desktop/Ganesh/diiscover_mulugu/VERCEL_DEPLOYMENT.md).
