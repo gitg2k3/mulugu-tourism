@@ -237,29 +237,8 @@ export async function seedDatabase() {
     }
   }
 
-  // 7. Seed initial admin user if none exists
-  console.log("Checking admin users...");
-  const adminUsers = await payload.find({
-    collection: "users",
-    limit: 1,
-  });
-
-  if (adminUsers.totalDocs === 0) {
-    await payload.create({
-      collection: "users",
-      data: {
-        email: "admin@discovermulugu.org",
-        password: "MuluguAdmin2026!",
-        name: "Site Administrator",
-        role: "admin",
-      },
-    });
-    console.log("  + Created default admin user: admin@discovermulugu.org");
-  } else {
-    console.log("  ~ Admin user already exists");
-  }
-
-  // 8. Seed Globals (site-settings, homepage, footer)
+  // 7. Seed Globals (site-settings, homepage, footer).
+  // Create the first admin through /admin so no shared password is distributed.
   console.log("Checking CMS globals...");
   try {
     const siteSettings = await payload.findGlobal({ slug: "site-settings" });

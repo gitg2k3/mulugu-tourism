@@ -11,13 +11,13 @@ interface DestinationShowcaseProps {
 }
 
 export function DestinationShowcase({ places }: DestinationShowcaseProps) {
-  if (!places || places.length === 0) return null;
-
   // Find center index (prefer Bogatha or middle element)
-  const bogathaIndex = places.findIndex((p) => p.slug.includes("bogatha"));
-  const defaultIndex = bogathaIndex !== -1 ? bogathaIndex : Math.floor(places.length / 2);
+  const bogathaIndex = places?.findIndex((p) => p.slug.includes("bogatha")) ?? -1;
+  const defaultIndex = bogathaIndex !== -1 ? bogathaIndex : Math.floor((places?.length ?? 0) / 2);
 
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
+
+  if (!places || places.length === 0) return null;
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev > 0 ? prev - 1 : places.length - 1));
